@@ -2,3 +2,4 @@
 - Tymoteusz - toruński
 - Dominik - koniński
 - Stanisław - turecki
+- Jan - warszawski
