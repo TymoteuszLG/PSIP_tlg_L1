@@ -5,3 +5,4 @@
 - Jan - warszawski
 - Marcin - miński
 - Bartek - radomszczański
+- Jakub - chełmski
