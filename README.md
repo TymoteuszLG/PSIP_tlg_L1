@@ -7,3 +7,4 @@
 - Bartek - radomszczański
 - Jakub - chełmski
 - Jan - miński
+- Dawid - bocheński
