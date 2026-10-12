@@ -12,3 +12,4 @@
 - Julia - hajnowski
 - Michał - biłgorajski
 - Daniel - sochaczewski
+- maciej - kutnowski
