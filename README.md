@@ -6,3 +6,4 @@
 - Marcin - miński
 - Bartek - radomszczański
 - Jakub - chełmski
+- Jan - miński
