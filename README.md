@@ -10,3 +10,4 @@
 - Dawid - bocheński
 - Kacper - legnicki
 - Julia - hajnowski
+- Michał - biłgorajski
