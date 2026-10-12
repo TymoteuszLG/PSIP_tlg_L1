@@ -8,3 +8,4 @@
 - Jakub - chełmski
 - Jan - miński
 - Dawid - bocheński
+- Kacper - legnicki
