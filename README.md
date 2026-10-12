@@ -3,3 +3,4 @@
 - Dominik - koniński
 - Stanisław - turecki
 - Jan - warszawski
+- Marcin - miński
