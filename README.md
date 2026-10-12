@@ -11,3 +11,4 @@
 - Kacper - legnicki
 - Julia - hajnowski
 - Michał - biłgorajski
+- Daniel - sochaczewski
