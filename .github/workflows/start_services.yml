@@ -6,6 +6,7 @@ on:
       - env-test
       - env-qa
       - main
+  workflow_dispatch:
 
 jobs:
   start-db:
@@ -14,24 +15,27 @@ jobs:
     environment:
       name: ${{ github.ref_name }}
 
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      ENVIRONMENT: ${{ github.ref_name }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Start PostGIS
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-          ENVIRONMENT: ${{ github.ref_name }}
         run: |
           docker compose \
-            -f docker-compose-remote.yml
+            -f docker-compose-remote.yml \
             -p remote-db-${{ github.ref_name }} \
             up -d --build
 
-      - name: Show running containers
+      - name: Check services
         run: |
-          docker ps
-          docker volume ls | grep remote-db || true
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} \
+            ps

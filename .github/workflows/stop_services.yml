@@ -19,17 +19,29 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
 
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      ENVIRONMENT: ${{ inputs.environment }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.environment }}
 
       - name: Stop PostGIS
         run: |
           docker compose \
             -f docker-compose-remote.yml \
             -p remote-db-${{ inputs.environment }} \
-            down
+            stop
 
-      - name: Verify
+      - name: Check services
         run: |
-          docker ps -a
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ inputs.environment }} \
+            ps --all
