@@ -39,3 +39,12 @@ jobs:
             -f docker-compose-remote.yml \
             -p remote-db-${{ github.ref_name }} \
             ps
+      - name: Build Python loader
+        run: |
+          docker compose -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} build python
+
+      - name: Load county and H3 grids
+        run: |
+          docker compose -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} run --rm --no-deps python
