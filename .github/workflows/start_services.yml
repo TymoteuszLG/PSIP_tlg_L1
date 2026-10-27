@@ -8,6 +8,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: start-services-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   start-db:
     runs-on: self-hosted
@@ -31,7 +35,7 @@ jobs:
           docker compose \
             -f docker-compose-remote.yml \
             -p remote-db-${{ github.ref_name }} \
-            up -d --build
+            up -d --build postgis
 
       - name: Check services
         run: |
@@ -39,12 +43,51 @@ jobs:
             -f docker-compose-remote.yml \
             -p remote-db-${{ github.ref_name }} \
             ps
+
       - name: Build Python loader
         run: |
-          docker compose -f docker-compose-remote.yml \
-            -p remote-db-${{ github.ref_name }} build python
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} \
+            build python
+
+      - name: Check BDOT source data
+        if: github.ref_name == 'env-test'
+        run: |
+          docker volume inspect psip-bdot-3010 > /dev/null
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} \
+            run --rm --no-deps \
+            -v psip-bdot-3010:/data/3010_SHP:ro \
+            python python -c "from pathlib import Path; files=list(Path('/data/3010_SHP').glob('*.shp')); print('Warstwy SHP:', len(files)); assert len(files)==64, 'Brak kompletu danych BDOT'"
 
       - name: Load county and H3 grids
         run: |
-          docker compose -f docker-compose-remote.yml \
-            -p remote-db-${{ github.ref_name }} run --rm --no-deps python
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} \
+            run --rm --no-deps \
+            -e ENVIRONMENT \
+            python python -u /app/load.py
+
+      - name: Load BDOT layers
+        if: github.ref_name == 'env-test'
+        run: |
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} \
+            run --rm --no-deps \
+            -e ENVIRONMENT \
+            -v psip-bdot-3010:/data/3010_SHP:ro \
+            python python -u /app/python/bdot_loader.py
+
+      - name: Aggregate BDOT into H3 grids
+        if: github.ref_name == 'env-test'
+        run: |
+          docker compose \
+            -f docker-compose-remote.yml \
+            -p remote-db-${{ github.ref_name }} \
+            run --rm --no-deps \
+            -e ENVIRONMENT \
+            python python -u /app/python/bdot_aggregate.py
