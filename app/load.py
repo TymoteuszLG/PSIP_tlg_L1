@@ -72,14 +72,14 @@ def main():
                     sql.SQL("""
                         CREATE TABLE {} (
                             h3_id TEXT PRIMARY KEY,
-                            geom geometry(MultiPolygon, 2180) NOT NULL
+                            geom geometry(MultiPolygon, 4326) NOT NULL
                         )
                     """).format(table)
                 )
                 cursor.executemany(
                     sql.SQL("""
                         INSERT INTO {} (h3_id, geom)
-                        VALUES (%s, ST_GeomFromText(%s, 2180))
+                        VALUES (%s, ST_GeomFromText(%s, 4326))
                     """).format(table),
                     rows,
                 )

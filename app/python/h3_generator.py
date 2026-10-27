@@ -69,7 +69,7 @@ def generate_grids(shapefile_path="/data/powiat.shp", resolutions=(6, 7, 8)):
                     clipped = MultiPolygon([clipped])
 
             if not clipped.is_empty:
-                rows.append((cell_id, clipped.wkt))
+                rows.append((cell_id, transform(to_wgs84, clipped).wkt))
 
         if not rows:
             raise RuntimeError(f"Pusta siatka dla poziomu {resolution}")
